@@ -1,8 +1,9 @@
-import 'package:asp_teste/datasource/pet_repository_contract.dart';
-import 'package:asp_teste/presentarion/state/pet_list_state.dart';
-import 'package:asp_teste/domain/usecase/use_case_contract.dart';
+import '../../datasource/pet_repository_contract.dart';
+import '../../presentarion/state/pet_list_state.dart';
+import 'use_case_contract.dart';
 
-class GetAllPetsUseCaseImpl implements IUseCaseNoParams<PetListState> {
+// class GetAllPetsUseCaseImpl implements IUseCaseNoParams<PetListState> {
+class GetAllPetsUseCaseImpl implements IUseCase<PetListState, NoParams> {
   final IPetRepository _repository;
 
   GetAllPetsUseCaseImpl({
@@ -10,7 +11,8 @@ class GetAllPetsUseCaseImpl implements IUseCaseNoParams<PetListState> {
   }) : _repository = repository;
 
   @override
-  Future<PetListState> call() {
+ Future<PetListState> call(NoParams noParams) {
+  // Future<PetListState> call() {
     return _repository.getAllPet();
   }
 }

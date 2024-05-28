@@ -34,6 +34,7 @@ dependencies:
   faker_dart: ^0.2.1
   flutter:
     sdk: flutter
+  get_it: ^7.7.0
 
 dev_dependencies:
   flutter_lints: ^2.0.0

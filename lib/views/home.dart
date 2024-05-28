@@ -166,7 +166,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ],
                     )),
-              if (PetListStore.atomPetByName.value is SuccessStateList)
+              if ((PetListStore.atomPetByName.value is SuccessStateList) &&
+                  (PetListStore.atomAllPet.value is SuccessStateList))
                 ListPetsByName(
                   state: (PetListStore.atomPetByName.value as SuccessStateList),
                 )
