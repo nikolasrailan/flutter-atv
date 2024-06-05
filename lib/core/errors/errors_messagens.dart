@@ -1,4 +1,7 @@
 abstract class MessagesError {
+  static const nullStringError = 'Erro de String Nula!!!';
+  static const shoterStringError = 'Erro de String Menor que o Permitido!!!';
+  static const longerStringError = 'Erro de String Maior que o Permitido!!!';
   static const defaultError = 'Erro Desconhecido!!!';
   static const userInvalidEmail = 'Email Inválido!!!';
   static const userDisabled = 'Login Desabilitado!!!';

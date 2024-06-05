@@ -1,7 +1,12 @@
 import 'package:asp/asp.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
+import '../components/inpute_text_field.dart';
 import '../core/errors/errors_classes.dart';
+import '../core/errors/errors_messagens.dart';
+import '../core/validators/min_lenght_str_validator.dart';
+import '../core/validators/search_validator.dart';
 import '../domain/entity/pet.dart';
 import '../presentarion/atom/pet_list_tom.dart';
 import '../presentarion/state/pet_list_state.dart';
@@ -16,9 +21,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final _formKey = GlobalKey<FormState>();
+  final _textSearchController = TextEditingController();
+
   @override
   void dispose() {
     super.dispose();
+    _textSearchController.dispose();
   }
 
   void _searchPets() {
@@ -34,15 +43,16 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),
           title: const Text('Erro Inesperado'),
-          icon: const Icon(
+          icon: Icon(
             Icons.cancel,
-            color: Colors.red,
+            color: Theme.of(context).colorScheme.error,
             size: 80.0,
           ),
           content: Text(msgError, textAlign: TextAlign.center),
@@ -76,111 +86,177 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     });
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.tertiary,
-        title: Text(widget.title),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 30.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
+    return GestureDetector(
+      onTap: (PetListStore.atomAllPet.value is ErrorStateList ||
+              PetListStore.loading.value)
+          ? null
+          : () {
+              // print(DateTime.now());
+              SystemChannels.textInput.invokeMethod('TextInput.hide');
+              // var f = FocusScope.of(context);
+
+              // if (!f.hasPrimaryFocus) {
+              //   f.unfocus();
+              // }
+            },
+      child: Scaffold(
+        appBar: AppBar(
+          //backgroundColor: Theme.of(context).colorScheme.tertiary,
+          title: Text(widget.title),
+        ),
+        body: Form(
+          key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 30.0),
+            child: Center(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   ElevatedButton(
-                    onPressed: _searchPets,
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all<Color>(
+                          Theme.of(context).colorScheme.secondaryContainer), // Change button color
+                    ),
+                    onPressed: PetListStore.loading.value
+                        ? null
+                        : () {
+                            _textSearchController.clear();
+                            _searchPets();
+                          },
                     child: PetListStore.loading.value
-                        ? const CircularProgressIndicator()
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                            child: CircularProgressIndicator(),
+                          )
                         : const Text(
-                            'Buscar Nomes',
+                            'Buscar Todos',
                             style: TextStyle(
                               fontSize: 20,
                             ),
                           ),
                   ),
-                  const SizedBox(width: 10),
-                  IconButton(
-                    onPressed: PetListStore.atomAllPet.value is SuccessStateList
-                        ? () => PetListStore.fetchByName.setValue('a')
-                        : null,
-                    icon: const Icon(Icons.search),
-                    color: Theme.of(context).colorScheme.primary,
-                    iconSize: 40,
+                  if (PetListStore.atomAllPet.value is SuccessStateList)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15.0, left: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                            child: InputTextField(
+                              label: 'Digite um nome para busca!!!',
+                              textEditingController: _textSearchController,
+                              icon: Icons.search,
+                              onValidator: (value) {
+                                try {
+                                  var isValid = SearchValidator(validators: [
+                                    MinLengthStrValidator(minLength: 1),
+                                    //MaxLengthStrValidator(),
+                                  ]).validations(value);
+
+                                  if (!isValid) {
+                                    return MessagesError.defaultError;
+                                  }
+
+                                  return null;
+                                } on DefaultError catch (e) {
+                                  return e.msg;
+                                } catch (e) {
+                                  return e.toString();
+                                }
+                              },
+                            ),
+                          ),
+                          //const SizedBox(width: 1),
+                          IconButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                // _searchPets();
+                                PetListStore.fetchByName
+                                    .setValue(_textSearchController.text);
+                              }
+                            },
+                            icon: const Icon(Icons.search),
+                            color: Theme.of(context).colorScheme.primary,
+                            iconSize: 40,
+                          ),
+                        ],
+                      ),
+                    ),
+                  const SizedBox(
+                    height: 20,
                   ),
+                  switch (PetListStore.atomAllPet.value) {
+                    InitialStateList() => const Text('Clique no Botão Buscar'),
+                    (SuccessStateList state) =>
+                      Expanded(child: ListOfPets(state: state)),
+                    ErrorStateList() => Container(
+                        margin: const EdgeInsets.only(top: 10),
+                        child: Column(
+                          children: <Widget>[
+                            Icon(
+                              Icons.cancel,
+                              size: 70.0,
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              'Teste Novamente',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.error,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  },
+                  if (PetListStore.atomPetByName.value is ErrorStateList)
+                    Container(
+                        margin: const EdgeInsets.only(top: 10, bottom: 10),
+                        child: Column(
+                          children: <Widget>[
+                            Icon(
+                              Icons.cancel,
+                              size: 70.0,
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              'Sem Resultados!!!',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.error,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        )),
+                  if ((PetListStore.atomPetByName.value is SuccessStateList) &&
+                      (PetListStore.atomAllPet.value is SuccessStateList))
+                    ListPetsByName(
+                      state: (PetListStore.atomPetByName.value
+                          as SuccessStateList),
+                    )
                 ],
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              switch (PetListStore.atomAllPet.value) {
-                InitialStateList() => const Text('Clique no Botão Buscar'),
-                (SuccessStateList state) =>
-                  Expanded(child: ListOfPets(state: state)),
-                ErrorStateList() => Container(
-                    margin: const EdgeInsets.only(top: 10),
-                    child: Column(
-                      children: <Widget>[
-                        Icon(
-                          Icons.cancel,
-                          size: 70.0,
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          'Teste Novamente',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-              },
-              if (PetListStore.atomPetByName.value is ErrorStateList)
-                Container(
-                    margin: const EdgeInsets.only(top: 10, bottom: 10),
-                    child: Column(
-                      children: <Widget>[
-                        Icon(
-                          Icons.cancel,
-                          size: 70.0,
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          'Sem Resultados!!!',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    )),
-              if ((PetListStore.atomPetByName.value is SuccessStateList) &&
-                  (PetListStore.atomAllPet.value is SuccessStateList))
-                ListPetsByName(
-                  state: (PetListStore.atomPetByName.value as SuccessStateList),
-                )
-            ],
+            ),
           ),
         ),
+        floatingActionButton: FloatingActionButton.extended(
+          label: const Text('Limpar'),
+          onPressed: () {
+            _textSearchController.clear();
+            PetListStore.cleanView();
+          },
+          //tooltip: 'Increment',
+          icon: const Icon(Icons.clear),
+        ), // This trailing comma makes auto-formatting nicer for build methods.
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        label: const Text('Limpar'),
-        onPressed: PetListStore.cleanView,
-        tooltip: 'Increment',
-        icon: const Icon(Icons.clear),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
@@ -211,6 +287,8 @@ class ListPetsByName extends StatelessWidget {
               child: ListView.builder(
                 shrinkWrap: true,
                 physics: const AlwaysScrollableScrollPhysics(),
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
                 itemCount: state.value.length,
                 itemBuilder: (_, index) {
                   final pet = state.value[index] as Pet;
@@ -239,6 +317,7 @@ class ListOfPets extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       //controller: scrollCont2,
       physics: const AlwaysScrollableScrollPhysics(),
       itemCount: state.value.length,
@@ -267,10 +346,13 @@ class CardItem extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
+            stops: const [0.30, 0.95],
             colors: [
-              Color.fromARGB(255, 246, 239, 247),
-              Color.fromARGB(255, 241, 202, 248),
+              Theme.of(context).colorScheme.secondaryContainer,
+              Theme.of(context).colorScheme.secondary,
+              // Color.fromARGB(255, 246, 239, 247),
+              // Color.fromARGB(255, 241, 202, 248),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -278,10 +360,13 @@ class CardItem extends StatelessWidget {
         ),
         child: ListTile(
           leading: CircleAvatar(
-            backgroundColor: Colors.purple,
+            backgroundColor: Theme.of(context).colorScheme.primary,
             child: Text(
               item.nome[0],
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           title: Text(

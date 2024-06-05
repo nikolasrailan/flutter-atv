@@ -1,4 +1,8 @@
 import 'package:asp/asp.dart';
+import 'package:asp_teste/core/themes/themes.dart';
+import 'package:asp_teste/core/validators/max_lenght_str_validator%20copy.dart';
+import 'package:asp_teste/core/validators/min_lenght_str_validator.dart';
+import 'package:asp_teste/core/validators/search_validator.dart';
 import 'package:auto_injector/auto_injector.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -14,9 +18,9 @@ import 'helper/pet_fake_repository.dart';
 import 'presentarion/reducer/pet_list_reducer.dart';
 import 'views/home.dart';
 
-const Color nubankPrimaryColor = Color(0xFF8A05BE);
-const Color nubankSecondaryColor = Color(0xFF820AD1);
-const Color nubankAccentColor = Color(0xFFB620E0);
+// const Color nubankPrimaryColor = Color(0xFF8A05BE);
+// const Color nubankSecondaryColor = Color(0xFF820AD1);
+// const Color nubankAccentColor = Color(0xFFB620E0);
 final injector = GetIt.instance;
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +46,7 @@ void main() {
     getByNameUseCase: injector<IUseCase>(instanceName: 'GetByNamePet'),
   ));
 
+ 
   // var injector = AutoInjector();
   // injector.addInstance<PetsFakApiDataBase>(PetsFakApiDataBase(numInstance: 20));
   // injector.add<IPetApiService>(PetServiceFakeApiImpl.new);
@@ -60,17 +65,19 @@ void main() {
   runApp(
     RxRoot(
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: nubankPrimaryColor,
-            primary: nubankPrimaryColor,
-            secondary: nubankSecondaryColor,
-            tertiary: nubankAccentColor,
-            brightness: Brightness.light,
-          ),
-          useMaterial3: true,
-        ),
+        theme: myTheme,
+        // theme: ThemeData(
+        //   colorScheme: ColorScheme.fromSeed(
+        //     seedColor: nubankPrimaryColor,
+        //     primary: nubankPrimaryColor,
+        //     secondary: nubankSecondaryColor,
+        //     tertiary: nubankAccentColor,
+        //     brightness: Brightness.light,
+        //   ),
+        //   useMaterial3: true,
+        // ),
         home: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
     ),

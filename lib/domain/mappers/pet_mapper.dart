@@ -6,12 +6,16 @@ abstract class PetMapper {
   static Pet clone(Pet instance) => Pet(
         nome: instance.nome,
         raca: instance.raca,
+        peso: instance.peso,
+        dtNascimento: instance.dtNascimento,
       );
 
   static Map<String, dynamic> fromEntitytoMap(Pet instance) {
     return {
       'nome': instance.nome,
       'raca': instance.raca,
+      'peso': instance.peso,
+      'dtNascimento': instance.dtNascimento,
     };
   }
 
@@ -19,6 +23,8 @@ abstract class PetMapper {
     return Pet(
       nome: map['nome'],
       raca: map['raca'],
+      peso: map['peso'],
+      dtNascimento: map['dtNascimento'],
     );
   }
 
