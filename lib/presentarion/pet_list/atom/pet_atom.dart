@@ -1,6 +1,6 @@
 import 'package:asp/asp.dart';
 
-import '../state/pet_list_state.dart';
+import '../../state/pet_list_state.dart';
 
 // atom
 // final petLoading = Atom<bool>(false);

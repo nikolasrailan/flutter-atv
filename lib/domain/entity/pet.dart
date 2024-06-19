@@ -1,9 +1,11 @@
 class Pet {
+  final int id;
   final String nome;
   final String raca;
   final double peso;
   final DateTime dtNascimento;
   Pet({
+    required this.id,
     required this.nome,
     required this.raca,
     required this.peso,
@@ -27,12 +29,14 @@ class Pet {
   }
 
   Pet copyWith({
+    int? id,
     String? nome,
     String? raca,
     double? peso,
     DateTime? dtNascimento,
   }) {
     return Pet(
+      id: id ?? this.id,
       nome: nome ?? this.nome,
       raca: raca ?? this.raca,
       peso: peso ?? this.peso,
@@ -42,6 +46,6 @@ class Pet {
 
   @override
   String toString() {
-    return 'Pet(nome: $nome, raca: $raca, peso: $peso, dtNascimento: $dtNascimento, idade: $idade)';
+    return 'Pet(nome: $id, nome: $nome, raca: $raca, peso: $peso, dtNascimento: $dtNascimento, idade: $idade)';
   }
 }

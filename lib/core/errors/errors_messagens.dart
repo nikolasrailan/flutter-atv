@@ -1,5 +1,11 @@
 abstract class MessagesError {
+  static const petNotFoundError = 'Erro de Pet não encontrado.!!!';
+  static const idError = 'Erro de Id não positivo.!!!';
   static const nullStringError = 'Erro de String Nula!!!';
+  static const emptyFieldError = 'Erro de Campo em Branco!!!';
+  static const invalidDateError = 'Erro de Data Inválida!!!';
+  static const minDoubleError = 'Erro valor menor que o Permitido!!!';
+  static const maxDoubleError = 'Erro valor maior que o Permitido!!!';
   static const shoterStringError = 'Erro de String Menor que o Permitido!!!';
   static const longerStringError = 'Erro de String Maior que o Permitido!!!';
   static const defaultError = 'Erro Desconhecido!!!';

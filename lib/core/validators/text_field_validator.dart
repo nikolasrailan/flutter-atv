@@ -1,9 +1,9 @@
 import 'package:asp_teste/core/validators/base_validator.dart';
 
-class SearchValidator {
+class TextFieldValidator {
   final List<BaseValidator> _validators;
 
-  SearchValidator({required List<BaseValidator> validators})
+  TextFieldValidator({required List<BaseValidator> validators})
       : _validators = validators;
 
   bool validations(String? validation) {

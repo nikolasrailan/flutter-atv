@@ -1,22 +1,21 @@
 import 'package:asp/asp.dart';
-import 'package:asp_teste/core/themes/themes.dart';
-import 'package:asp_teste/core/validators/max_lenght_str_validator%20copy.dart';
-import 'package:asp_teste/core/validators/min_lenght_str_validator.dart';
-import 'package:asp_teste/core/validators/search_validator.dart';
-import 'package:auto_injector/auto_injector.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
+import 'core/routes/routes.dart';
+import 'core/themes/themes.dart';
 import 'datasource/pet_repository_contract.dart';
 import 'datasource/pet_repository_impl.dart';
 import 'domain/usecase/get_all_pets_use_case_impl.dart';
+import 'domain/usecase/get_by_id_pet_use_case_impl.dart';
 import 'domain/usecase/get_by_name_pets_use_case_impl copy.dart';
+import 'domain/usecase/update_pet_use_case_impl.dart';
 import 'domain/usecase/use_case_contract.dart';
 import 'external/services/pet_api_contract.dart';
 import 'external/services/pet_api_service_fake_impl.dart';
 import 'helper/pet_fake_repository.dart';
-import 'presentarion/reducer/pet_list_reducer.dart';
-import 'views/home.dart';
+import 'presentarion/pet_detail/reducer/pet_detail_reducer.dart';
+import 'presentarion/pet_list/reducer/pet_list_reducer.dart';
 
 // const Color nubankPrimaryColor = Color(0xFF8A05BE);
 // const Color nubankSecondaryColor = Color(0xFF820AD1);
@@ -40,13 +39,27 @@ void main() {
             repository: injector<IPetRepository>(),
           ),
       instanceName: 'GetByNamePet');
+  injector.registerFactory<IUseCase>(
+      () => UpdatePetsUseCaseImpl(
+            repository: injector<IPetRepository>(),
+          ),
+      instanceName: 'UpdatePet');
+  injector.registerFactory<IUseCase>(
+      () => GetByIdPetUseCaseImpl(
+            repository: injector<IPetRepository>(),
+          ),
+      instanceName: 'GetByIdPet');
 
   injector.registerSingleton<PetListReducer>(PetListReducer(
     getAllPetsUseCase: injector<IUseCase>(instanceName: 'GetAllPet'),
     getByNameUseCase: injector<IUseCase>(instanceName: 'GetByNamePet'),
   ));
+  
+  injector.registerSingleton<PetDetailReducer>(PetDetailReducer(
+    updatePetUseCase: injector<IUseCase>(instanceName: 'UpdatePet'),
+    getByIdPetUseCase: injector<IUseCase>(instanceName: 'GetByIdPet'),
+  ));
 
- 
   // var injector = AutoInjector();
   // injector.addInstance<PetsFakApiDataBase>(PetsFakApiDataBase(numInstance: 20));
   // injector.add<IPetApiService>(PetServiceFakeApiImpl.new);
@@ -64,10 +77,11 @@ void main() {
   // injector.commit();
   runApp(
     RxRoot(
-      child: MaterialApp(
+      child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'Flutter Pets',
         theme: myTheme,
+        routerConfig: routers,
         // theme: ThemeData(
         //   colorScheme: ColorScheme.fromSeed(
         //     seedColor: nubankPrimaryColor,
@@ -78,7 +92,7 @@ void main() {
         //   ),
         //   useMaterial3: true,
         // ),
-        home: const MyHomePage(title: 'Flutter Demo Home Page'),
+        // home: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
     ),
   );

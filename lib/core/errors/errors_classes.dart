@@ -1,4 +1,4 @@
-import 'package:asp_teste/core/errors/errors_messagens.dart';
+import 'errors_messagens.dart';
 
 sealed class Failure implements Exception {
   final String msg;
@@ -15,6 +15,13 @@ class DefaultError extends Failure {
   // String toString() => 'DefaultError(msg: $msg)';
 }
 
+class PetNotFound extends Failure {
+  PetNotFound([String msg = MessagesError.defaultError]) : super(msg);
+
+  // @override
+  // String toString() => 'DefaultError(msg: $msg)';
+}
+
 class InvalidSearchText extends Failure {
   InvalidSearchText([String msg = MessagesError.defaultError]) : super(msg);
 
@@ -24,6 +31,18 @@ class InvalidSearchText extends Failure {
 
 class EmptyList extends Failure {
   EmptyList([String msg = MessagesError.defaultError]) : super(msg);
+
+  // @override
+  // String toString() => 'Error1(msg: $msg)';
+}
+class EmptyField extends Failure {
+  EmptyField([String msg = MessagesError.defaultError]) : super(msg);
+
+  // @override
+  // String toString() => 'Error1(msg: $msg)';
+}
+class InvalidDate extends Failure {
+  InvalidDate([String msg = MessagesError.defaultError]) : super(msg);
 
   // @override
   // String toString() => 'Error1(msg: $msg)';

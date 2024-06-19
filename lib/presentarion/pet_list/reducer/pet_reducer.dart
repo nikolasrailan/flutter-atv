@@ -1,7 +1,7 @@
 import 'package:asp/asp.dart';
 
-import '../../domain/usecase/get_by_name_pets_use_case_impl copy.dart';
-import '../../domain/usecase/use_case_contract.dart';
+import '../../../domain/usecase/get_by_name_pets_use_case_impl copy.dart';
+import '../../../domain/usecase/use_case_contract.dart';
 import '../atom/pet_atom.dart';
 
 class PetReducer extends Reducer {

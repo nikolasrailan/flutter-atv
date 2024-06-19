@@ -4,6 +4,7 @@ import '../entity/pet.dart';
 
 abstract class PetMapper {
   static Pet clone(Pet instance) => Pet(
+        id: instance.id,
         nome: instance.nome,
         raca: instance.raca,
         peso: instance.peso,
@@ -12,19 +13,21 @@ abstract class PetMapper {
 
   static Map<String, dynamic> fromEntitytoMap(Pet instance) {
     return {
+      'id': instance.id,
       'nome': instance.nome,
       'raca': instance.raca,
       'peso': instance.peso,
-      'dtNascimento': instance.dtNascimento,
+      'dtNascimento': instance.dtNascimento.toIso8601String(),
     };
   }
 
   static Pet fromMapToEntity(Map<String, dynamic> map) {
     return Pet(
+      id: map['id'],
       nome: map['nome'],
       raca: map['raca'],
       peso: map['peso'],
-      dtNascimento: map['dtNascimento'],
+      dtNascimento: DateTime.parse(map['dtNascimento']),
     );
   }
 

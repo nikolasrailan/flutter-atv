@@ -1,14 +1,18 @@
 import 'package:asp/asp.dart';
+import 'package:asp_teste/core/routes/routes.dart';
+import 'package:asp_teste/core/validators/max_lenght_str_validator%20copy.dart';
+import 'package:asp_teste/domain/mappers/pet_mapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
 import '../components/inpute_text_field.dart';
 import '../core/errors/errors_classes.dart';
 import '../core/errors/errors_messagens.dart';
 import '../core/validators/min_lenght_str_validator.dart';
-import '../core/validators/search_validator.dart';
+import '../core/validators/text_field_validator.dart';
 import '../domain/entity/pet.dart';
-import '../presentarion/atom/pet_list_tom.dart';
+import '../presentarion/pet_list/atom/pet_list_tom.dart';
 import '../presentarion/state/pet_list_state.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -115,7 +119,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all<Color>(
-                          Theme.of(context).colorScheme.secondaryContainer), // Change button color
+                          Theme.of(context)
+                              .colorScheme
+                              .secondaryContainer), // Change button color
                     ),
                     onPressed: PetListStore.loading.value
                         ? null
@@ -148,9 +154,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               icon: Icons.search,
                               onValidator: (value) {
                                 try {
-                                  var isValid = SearchValidator(validators: [
+                                  var isValid = TextFieldValidator(validators: [
                                     MinLengthStrValidator(minLength: 1),
-                                    //MaxLengthStrValidator(),
+                                    MaxLengthStrValidator(),
                                   ]).validations(value);
 
                                   if (!isValid) {
@@ -347,7 +353,7 @@ class CardItem extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           gradient: LinearGradient(
-            stops: const [0.30, 0.95],
+            stops: const [0.45, 0.95],
             colors: [
               Theme.of(context).colorScheme.secondaryContainer,
               Theme.of(context).colorScheme.secondary,
@@ -370,11 +376,21 @@ class CardItem extends StatelessWidget {
             ),
           ),
           title: Text(
-            item.nome,
+            '${item.nome} (Id: ${item.id}) ',
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           subtitle: Text(
             item.raca,
+          ),
+          trailing: InkWell(
+            onTap: () => context.pushNamed(
+              RoutesApp.petDetails.name,
+              extra: PetMapper.fromEntityToJson(item),
+            ),
+            child: Icon(
+              Icons.read_more,
+              color: Theme.of(context).colorScheme.primaryContainer,
+            ),
           ),
         ),
       ),
