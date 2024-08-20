@@ -26,13 +26,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final _formKey = GlobalKey<FormState>();
-  final _textSearchController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
 
-  @override
-  void dispose() {
-    super.dispose();
-    _textSearchController.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   _textSearchController.dispose();
+  // }
 
   void _searchPets() {
     PetListStore.fetchAll();
@@ -111,11 +112,63 @@ class _MyHomePageState extends State<MyHomePage> {
         body: Form(
           key: _formKey,
           child: Padding(
-            padding: const EdgeInsets.only(top: 30.0),
+            padding: const EdgeInsets.all(50),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  InputTextField(
+                    label: 'Usuário',
+                    textEditingController: _usernameController,
+                    icon: Icons.person,
+                    onValidator: (value) {
+                      try {
+                        var isValid = TextFieldValidator(validators: [
+                          MinLengthStrValidator(minLength: 1),
+                          MaxLengthStrValidator(),
+                        ]).validations(value);
+
+                        if (!isValid) {
+                          return MessagesError.defaultError;
+                        }
+
+                        return null;
+                      } on DefaultError catch (e) {
+                        return e.msg;
+                      } catch (e) {
+                        return e.toString();
+                      }
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  InputTextField(
+                    label: 'Senha',
+                    textEditingController: _passwordController,
+                    icon: Icons.lock,
+                    onValidator: (value) {
+                      try {
+                        var isValid = TextFieldValidator(validators: [
+                          MinLengthStrValidator(minLength: 1),
+                          MaxLengthStrValidator(),
+                        ]).validations(value);
+
+                        if (!isValid) {
+                          return MessagesError.defaultError;
+                        }
+
+                        return null;
+                      } on DefaultError catch (e) {
+                        return e.msg;
+                      } catch (e) {
+                        return e.toString();
+                      }
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
                   ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor: WidgetStateProperty.all<Color>(
@@ -123,145 +176,34 @@ class _MyHomePageState extends State<MyHomePage> {
                               .colorScheme
                               .secondaryContainer), // Change button color
                     ),
-                    onPressed: PetListStore.loading.value
-                        ? null
-                        : () {
-                            _textSearchController.clear();
-                            _searchPets();
-                          },
-                    child: PetListStore.loading.value
-                        ? const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0),
-                            child: CircularProgressIndicator(),
-                          )
-                        : const Text(
-                            'Buscar Todos',
-                            style: TextStyle(
-                              fontSize: 20,
-                            ),
-                          ),
-                  ),
-                  if (PetListStore.atomAllPet.value is SuccessStateList)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 15.0, left: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Expanded(
-                            child: InputTextField(
-                              label: 'Digite um nome para busca!!!',
-                              textEditingController: _textSearchController,
-                              icon: Icons.search,
-                              onValidator: (value) {
-                                try {
-                                  var isValid = TextFieldValidator(validators: [
-                                    MinLengthStrValidator(minLength: 1),
-                                    MaxLengthStrValidator(),
-                                  ]).validations(value);
-
-                                  if (!isValid) {
-                                    return MessagesError.defaultError;
-                                  }
-
-                                  return null;
-                                } on DefaultError catch (e) {
-                                  return e.msg;
-                                } catch (e) {
-                                  return e.toString();
-                                }
-                              },
-                            ),
-                          ),
-                          //const SizedBox(width: 1),
-                          IconButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                // _searchPets();
-                                PetListStore.fetchByName
-                                    .setValue(_textSearchController.text);
-                              }
-                            },
-                            icon: const Icon(Icons.search),
-                            color: Theme.of(context).colorScheme.primary,
-                            iconSize: 40,
-                          ),
-                        ],
+                    onPressed: () {},
+                    child: const Text(
+                      'Login',
+                      style: TextStyle(
+                        fontSize: 20,
                       ),
                     ),
+                  ),
                   const SizedBox(
                     height: 20,
                   ),
-                  switch (PetListStore.atomAllPet.value) {
-                    InitialStateList() => const Text('Clique no Botão Buscar'),
-                    (SuccessStateList state) =>
-                      Expanded(child: ListOfPets(state: state)),
-                    ErrorStateList() => Container(
-                        margin: const EdgeInsets.only(top: 10),
-                        child: Column(
-                          children: <Widget>[
-                            Icon(
-                              Icons.cancel,
-                              size: 70.0,
-                              color: Theme.of(context).colorScheme.error,
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Teste Novamente',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.error,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ],
-                        ),
+                  TextButton(
+                    onPressed: () {
+                      context.pushNamed(
+                          'register'); // Navegação para a tela de cadastro
+                    },
+                    child: const Text(
+                      'Cadastre-se',
+                      style: TextStyle(
+                        color: Colors.blue,
                       ),
-                  },
-                  if (PetListStore.atomPetByName.value is ErrorStateList)
-                    Container(
-                        margin: const EdgeInsets.only(top: 10, bottom: 10),
-                        child: Column(
-                          children: <Widget>[
-                            Icon(
-                              Icons.cancel,
-                              size: 70.0,
-                              color: Theme.of(context).colorScheme.error,
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Sem Resultados!!!',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.error,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ],
-                        )),
-                  if ((PetListStore.atomPetByName.value is SuccessStateList) &&
-                      (PetListStore.atomAllPet.value is SuccessStateList))
-                    ListPetsByName(
-                      state: (PetListStore.atomPetByName.value
-                          as SuccessStateList),
-                    )
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          label: const Text('Limpar'),
-          onPressed: () {
-            _textSearchController.clear();
-            PetListStore.cleanView();
-          },
-          //tooltip: 'Increment',
-          icon: const Icon(Icons.clear),
-        ), // This trailing comma makes auto-formatting nicer for build methods.
       ),
     );
   }
@@ -382,16 +324,16 @@ class CardItem extends StatelessWidget {
           subtitle: Text(
             item.raca,
           ),
-          trailing: InkWell(
-            onTap: () => context.pushNamed(
-              RoutesApp.petDetails.name,
-              extra: PetMapper.fromEntityToJson(item),
-            ),
-            child: Icon(
-              Icons.read_more,
-              color: Theme.of(context).colorScheme.primaryContainer,
-            ),
-          ),
+          // trailing: InkWell(
+          //   onTap: () => context.pushNamed(
+          //     RoutesApp.petDetails.name,
+          //     extra: PetMapper.fromEntityToJson(item),
+          //   ),
+          //   child: Icon(
+          //     Icons.read_more,
+          //     color: Theme.of(context).colorScheme.primaryContainer,
+          //   ),
+          // ),
         ),
       ),
     );

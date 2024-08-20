@@ -54,7 +54,7 @@ void main() {
     getAllPetsUseCase: injector<IUseCase>(instanceName: 'GetAllPet'),
     getByNameUseCase: injector<IUseCase>(instanceName: 'GetByNamePet'),
   ));
-  
+
   injector.registerSingleton<PetDetailReducer>(PetDetailReducer(
     updatePetUseCase: injector<IUseCase>(instanceName: 'UpdatePet'),
     getByIdPetUseCase: injector<IUseCase>(instanceName: 'GetByIdPet'),
@@ -79,7 +79,7 @@ void main() {
     RxRoot(
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Pets',
+        title: 'Login IFPR',
         theme: myTheme,
         routerConfig: routers,
         // theme: ThemeData(
