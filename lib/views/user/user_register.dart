@@ -1,4 +1,12 @@
+import 'package:asp_teste/components/inpute_text_field.dart';
+import 'package:asp_teste/core/errors/errors_classes.dart';
+import 'package:asp_teste/core/errors/errors_messagens.dart';
+import 'package:asp_teste/core/routes/routes.dart';
+import 'package:asp_teste/core/validators/max_lenght_str_validator%20copy.dart';
+import 'package:asp_teste/core/validators/min_lenght_str_validator.dart';
+import 'package:asp_teste/core/validators/text_field_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class UserRegisterPage extends StatefulWidget {
   const UserRegisterPage({super.key});
@@ -9,8 +17,8 @@ class UserRegisterPage extends StatefulWidget {
 
 class _UserRegisterPageState extends State<UserRegisterPage> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
@@ -25,64 +33,140 @@ class _UserRegisterPageState extends State<UserRegisterPage> {
         child: Form(
           key: _formKey,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nome'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, insira seu nome';
+              InputTextField(
+                label: 'Email',
+                textEditingController: _emailController,
+                icon: Icons.email,
+                onValidator: (value) {
+                  try {
+                    var isValid = TextFieldValidator(validators: [
+                      MinLengthStrValidator(minLength: 1),
+                      MaxLengthStrValidator(),
+                    ]).validations(value);
+
+                    if (!isValid) {
+                      return MessagesError.defaultError;
+                    }
+
+                    return null;
+                  } on DefaultError catch (e) {
+                    return e.msg;
+                  } catch (e) {
+                    return e.toString();
                   }
-                  return null;
                 },
               ),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, insira seu email';
+              SizedBox(
+                height: 20,
+              ),
+              InputTextField(
+                label: 'Usuário',
+                textEditingController: _usernameController,
+                icon: Icons.person,
+                onValidator: (value) {
+                  try {
+                    var isValid = TextFieldValidator(validators: [
+                      MinLengthStrValidator(minLength: 1),
+                      MaxLengthStrValidator(),
+                    ]).validations(value);
+
+                    if (!isValid) {
+                      return MessagesError.defaultError;
+                    }
+
+                    return null;
+                  } on DefaultError catch (e) {
+                    return e.msg;
+                  } catch (e) {
+                    return e.toString();
                   }
-                  // Adicione validação de formato de email se necessário
-                  return null;
                 },
               ),
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Senha'),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, insira sua senha';
+              SizedBox(
+                height: 20,
+              ),
+              InputTextField(
+                label: 'Senha',
+                textEditingController: _passwordController,
+                icon: Icons.lock,
+                onValidator: (value) {
+                  try {
+                    var isValid = TextFieldValidator(validators: [
+                      MinLengthStrValidator(minLength: 1),
+                      MaxLengthStrValidator(),
+                    ]).validations(value);
+
+                    if (!isValid) {
+                      return MessagesError.defaultError;
+                    }
+
+                    return null;
+                  } on DefaultError catch (e) {
+                    return e.msg;
+                  } catch (e) {
+                    return e.toString();
                   }
-                  return null;
                 },
               ),
-              TextFormField(
-                controller: _confirmPasswordController,
-                decoration:
-                    const InputDecoration(labelText: 'Confirme sua senha'),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, confirme sua senha';
+              SizedBox(
+                height: 20,
+              ),
+              InputTextField(
+                label: 'Confirme sua senha',
+                textEditingController: _confirmPasswordController,
+                icon: Icons.lock,
+                onValidator: (value) {
+                  try {
+                    var isValid = TextFieldValidator(validators: [
+                      MinLengthStrValidator(minLength: 1),
+                      MaxLengthStrValidator(),
+                    ]).validations(value);
+
+                    if (!isValid) {
+                      return MessagesError.defaultError;
+                    }
+
+                    return null;
+                  } on DefaultError catch (e) {
+                    return e.msg;
+                  } catch (e) {
+                    return e.toString();
                   }
-                  if (value != _passwordController.text) {
-                    return 'As senhas não coincidem';
-                  }
-                  return null;
                 },
+              ),
+              SizedBox(
+                height: 20,
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // Implementar a lógica de cadastro
-                  }
-                },
-                child: const Text('Cadastrar'),
-              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      context.go('/');
+                    },
+                    child: const Text('Voltar'),
+                  ),
+                  SizedBox(width: 50),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all<Color>(
+                          Theme.of(context)
+                              .colorScheme
+                              .secondaryContainer), // Change button color
+                    ),
+                    onPressed: () {},
+                    child: const Text(
+                      'Login',                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),

@@ -25,7 +25,7 @@ final GoRouter routers = GoRouter(
       builder: (context, state) => const MyHomePage(title: 'Login IFPR'),
     ),
     GoRoute(
-      path: '/register', // Defina um nome para a rota de cadastro
+      path: '/user/user_register', // Defina um nome para a rota de cadastro
       builder: (context, state) => const UserRegisterPage(),
     ),
   ],

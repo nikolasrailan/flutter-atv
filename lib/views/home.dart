@@ -189,8 +189,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   TextButton(
                     onPressed: () {
-                      context.pushNamed(
-                          'register'); // Navegação para a tela de cadastro
+                      context.go(
+                          '/user/user_register'); // Navegação para a tela de cadastro
                     },
                     child: const Text(
                       'Cadastre-se',

@@ -22,7 +22,7 @@ final class MinDoubleFromStrValidator extends BaseValidator<String?> {
             return throw DefaultError(
                 '${MessagesError.minDoubleError} - (${minValue.toStringAsFixed(2)})');
           }
-
+          
           return nextValidator?.validate(validation) ?? true;
         }
     }
